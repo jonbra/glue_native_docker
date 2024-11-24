@@ -197,9 +197,33 @@ else\n\
     find /opt -name gluetools.sh\n\
 fi' > /startup.sh && chmod +x /startup.sh
 
+RUN echo '#!/bin/bash\n\
+echo "Starting MySQL..."\n\
+service mysql start\n\
+status=$?\n\
+if [ $status -ne 0 ]; then\n\
+    echo "Failed to start MySQL: $status"\n\
+    exit $status\n\
+fi\n\
+\n\
+echo "MySQL status:"\n\
+service mysql status\n\
+\n\
+echo "Waiting for MySQL to be ready..."\n\
+while ! mysqladmin ping -h"localhost" --silent; do\n\
+    sleep 1\n\
+done\n\
+\n\
+echo "MySQL is ready"\n\
+\n\
+echo "Database contents:"\n\
+mysql -u gluetools -pglue12345 -e "SHOW DATABASES; USE GLUE_TOOLS; SHOW TABLES;"\n\
+\n\
+echo "MySQL is now ready. You can run GLUE commands."' > /start.sh && chmod +x /start.sh
 
+ENTRYPOINT ["/start.sh"]
 # Change the CMD to use this startup script
-CMD ["/startup.sh"]
+#CMD ["/startup.sh"]
 
 # Start MySQL and run GLUE
 #CMD service mysql start 
