@@ -221,7 +221,7 @@ mysql -u gluetools -pglue12345 -e "SHOW DATABASES; USE GLUE_TOOLS; SHOW TABLES;"
 \n\
 echo "MySQL is now ready. You can run GLUE commands."' > /start.sh && chmod +x /start.sh
 
-ENTRYPOINT ["/start.sh"]
+CMD ["/start.sh"]
 # Change the CMD to use this startup script
 #CMD ["/startup.sh"]
 
